@@ -10,6 +10,9 @@ from app.core.config import settings
 from app.db.mongodb import connect_to_mongo, close_mongo_connection, get_database
 
 
+from app.api.v1.api import api_router
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Manages application startup and shutdown lifecycle."""
@@ -25,6 +28,9 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     lifespan=lifespan
 )
+
+# Include API v1 router
+app.include_router(api_router, prefix=settings.API_V1_STR)
 
 # CORS middleware
 if settings.CORS_ORIGINS:
