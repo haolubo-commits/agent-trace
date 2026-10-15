@@ -3,7 +3,8 @@
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
 [![MongoDB](https://img.shields.io/badge/Database-MongoDB%20Motor-47A248.svg?style=flat&logo=mongodb)](https://www.mongodb.com)
 [![Python](https://img.shields.io/badge/Python-3.11%2B-blue.svg?style=flat&logo=python)](https://python.org)
-[![React Flow](https://img.shields.io/badge/Graph-React%20Flow-ff0072.svg?style=flat)](https://reactflow.dev)
+[![React](https://img.shields.io/badge/Frontend-React%2018%20%2B%20Vite-61DAFB.svg?style=flat&logo=react)](https://react.dev)
+[![Docker](https://img.shields.io/badge/Container-Docker%20Compose-2496ED.svg?style=flat&logo=docker)](https://docker.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > **AgentTrace** is a high-performance observability and execution graph visualizer for autonomous AI agents. It models multi-agent workflows, tool calls, reasoning steps, and token economics as an interactive **Directed Acyclic Graph (DAG)** backed by MongoDB's document store.
@@ -34,34 +35,50 @@ graph TD
 - [x] **Day 1: Scaffolding & Architecture**: MongoDB schema design, asynchronous Motor connection lifecycle, Pydantic v2 execution graph models, and configuration.
 - [x] **Day 2: Trace Ingestion & DAG Traversal APIs**: Streaming step ingestion endpoints, tool execution logging, DAG topological tree builder with auto-computed coordinates, and trace status management.
 - [x] **Day 3: Interactive React Flow DAG Viewer**: Node-based graph canvas, step timeline inspector, token cost break-down, and tool payload drawers.
-- [ ] **Day 4: Aggregation Pipelines, Tests & Docker**: MongoDB analytics pipelines (token bottlenecks, error rates, p95 latencies), Pytest integration suites, and Docker Compose environment.
+- [x] **Day 4: Aggregation Pipelines, Tests & Docker**: MongoDB analytics pipelines (token bottlenecks, error rates, p95 latencies), Pytest integration suites, and Docker Compose environment.
 
 ---
 
-## 🚀 Quickstart
+## 🚀 Quickstart with Docker Compose
 
-### Prerequisites
-- Python 3.11+
-- MongoDB 6.0+ (local instance or Docker container)
+Run the entire stack (MongoDB 7.0 + FastAPI Backend + React Frontend) with a single command:
 
-### Setup
 ```bash
 # Clone the repository
 git clone https://github.com/haolubo-commits/agent-trace.git
-cd agent-trace/backend
+cd agent-trace
 
-# Create virtual environment
+# Start MongoDB, Backend API, and Frontend UI
+docker-compose up --build
+```
+
+- **Frontend Dashboard**: `http://localhost:5174`
+- **FastAPI Interactive Docs**: `http://localhost:8000/docs`
+- **MongoDB Instance**: `mongodb://localhost:27017`
+
+---
+
+## 🧪 Local Development & Testing
+
+### Backend & Unit Tests
+```bash
+cd backend
 python3 -m venv venv
 source venv/bin/activate
-
-# Install dependencies
 pip install -r requirements.txt
 
-# Run the API server
-uvicorn app.main:app --reload --port 8000
+# Run pytest test suite
+pytest -v tests/
 
-# Seed demo execution DAG trace
+# Seed realistic multi-agent execution DAG
 python seed_demo_trace.py
+```
+
+### Frontend Development
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
 ---
@@ -83,3 +100,9 @@ python seed_demo_trace.py
 - `POST /api/v1/traces/{trace_id}/steps/{step_id}/tools` — Record tool invocation logs under a step node.
 - `GET /api/v1/traces/{trace_id}/steps/{step_id}/tools` — List tool calls for a step.
 - `GET /api/v1/traces/{trace_id}/tools` — List all tool calls for a trace.
+
+### Observability & Analytics Pipelines
+- `GET /api/v1/traces/{trace_id}/analytics` — Execute MongoDB aggregation pipelines computing:
+  - Step type distribution (count, prompt vs completion tokens, avg/max latency).
+  - Tool invocation metrics (total invocations, failure count, error rate %, avg duration).
+  - Automated performance bottlenecks (max token consumers and latency outliers with remediation tips).
